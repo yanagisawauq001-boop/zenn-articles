@@ -6,7 +6,6 @@ on:
     paths:
       - 'articles/**'
 
-# ここでジョブに明示的に書き込み権限を与えます
 permissions:
   contents: write
 
@@ -22,3 +21,4 @@ jobs:
         uses: C-Naoki/zenn-qiita-sync@main
         with:
           qiita-token: ${{ secrets.QIITA_TOKEN }}
+          # フォルダ指定を削除し、デフォルト設定で動作させます
