@@ -1,0 +1,20 @@
+name: Publish to Qiita
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'articles/**'
+
+jobs:
+  publish_qiita:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Zenn Qiita Sync
+        uses: C-Naoki/zenn-qiita-sync@main
+        with:
+          qiita-token: ${{ secrets.QIITA_TOKEN }}
