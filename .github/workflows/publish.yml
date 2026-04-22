@@ -6,6 +6,10 @@ on:
     paths:
       - 'articles/**'
 
+# ここでジョブに明示的に書き込み権限を与えます
+permissions:
+  contents: write
+
 jobs:
   publish_qiita:
     runs-on: ubuntu-latest
