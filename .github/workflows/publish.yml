@@ -17,6 +17,6 @@ jobs:
         env:
           QIITA_KEY: ${{ secrets.QIITA_KEY }}
         run: |
-          # PCで成功したのと同じ「login」コマンドで設定を自動生成させます
-          qiita login --token "$QIITA_KEY"
+          # ツールが「入力を待っている」状態に対し、echoで値を送り込みます
+          echo "$QIITA_KEY" | qiita login
           qiita publish --all
