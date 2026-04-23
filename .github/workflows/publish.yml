@@ -13,23 +13,30 @@ jobs:
         env:
           QIITA_TOKEN: ${{ secrets.MY_QIITA_PASS }}
         run: |
+          # 本文を取得
           BODY_JSON=$(cat articles/fresh.md | jq -sRr @json)
+          # 現在時刻をタイトルに混ぜて重複を避ける
+          TITLE="Yokohama Dev Log $(date +'%H:%M:%S')"
           
-          # 実行結果を変数に格納し、中身を表示させます
+          echo "Sending to Qiita..."
+          
+          # 修正ポイント: tags をより厳格なJSON形式で組み立て
           RESPONSE=$(curl -s -X POST "https://qiita.com/api/v2/items" \
             -H "Authorization: Bearer $QIITA_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{
               \"body\": $BODY_JSON,
               \"private\": false,
-              \"tags\": [{\"name\": \"test\"}],
-              \"title\": \"Final Victory Check from Yokohama\"
+              \"tags\": [{\"name\": \"GitHub\"}, {\"name\": \"Test\"}],
+              \"title\": \"$TITLE\"
             }")
           
-          echo "Qiita API Response: $RESPONSE"
+          echo "Response from Qiita: $RESPONSE"
           
-          # エラーメッセージが含まれているかチェック
-          if [[ $RESPONSE == *"message"* ]]; then
-            echo "API returned an error."
+          # エラーがあれば終了させる
+          if echo "$RESPONSE" | jq -e '.message' > /dev/null; then
+            echo "Failed to publish."
             exit 1
           fi
+          
+          echo "Success! Article created."
