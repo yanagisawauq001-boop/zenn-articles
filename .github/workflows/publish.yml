@@ -2,7 +2,6 @@ name: Publish to Qiita
 on:
   push:
     branches: [ main ]
-    paths: [ 'articles/**' ]
 
 jobs:
   publish:
@@ -11,10 +10,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
-      - name: Force Deploy Credentials
+      - name: Publish
+        env:
+          QIITA_ACCESS_TOKEN: ${{ secrets.MY_QIITA_PASS }}
         run: |
-          mkdir -p ~/.config/qiita-cli
-          # 成功が証明されている yanagさんの設定を、変数を通さず直接書き込みます
-          echo '[{"name":"qiita","accessToken":"4dd1b293123a547f3405a2f50ed19c39f14687cb"}]' > ~/.config/qiita-cli/credentials.json
-      - name: Publish to Qiita
-        run: qiita publish --all
+          # 以前のキャッシュが残らないよう、念のため削除
+          rm -rf ~/.config/qiita-cli
+          qiita publish --all
