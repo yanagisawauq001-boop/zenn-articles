@@ -1,31 +1,22 @@
 name: Publish to Qiita
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'articles/**'
-
-permissions:
-  contents: write
+    branches: [ main ]
+    paths: [ 'articles/**' ]
 
 jobs:
-  publish_qiita:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
-
-      - name: Create credentials.json
-        run: |
-          mkdir -p /home/runner/.config/qiita-cli
-          python3 -c "import json, os; print(json.dumps([{'accessToken': os.environ['QIITA_TOKEN'], 'name': 'default'}]))" > /home/runner/.config/qiita-cli/credentials.json
+      - name: Create Config
         env:
-          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
-
-      - name: Publish to Qiita
-        run: qiita publish --all
+          TOKEN: ${{ secrets.QIITA_TOKEN }}
+        run: |
+          mkdir -p ~/.config/qiita-cli
+          # あなたのID「YanaSho001」を明示的に指定して、設定ファイルを作成します
+          echo "[{\"accessToken\":\"$TOKEN\",\"id\":\"YanaSho001\",\"name\":\"default\"}]" > ~/.config/qiita-cli/credentials.json
+      - name: Publish
+        run: qiita publish --all --no-incremental
