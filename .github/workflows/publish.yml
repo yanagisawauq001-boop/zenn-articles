@@ -13,12 +13,11 @@ jobs:
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
 
-      - name: Force Create Credentials
-        # ツールが「find」などのエラーを出さないよう、
-        # 配列の中に、 yanagさんのPCで成功したのと同等のデータを直接書き込みます
+      - name: Deploy Local Success Credentials
         run: |
           mkdir -p ~/.config/qiita-cli
-          echo '[{"accessToken":"${{ secrets.MY_QIITA_PASS }}","id":"YanaSho001","name":"default"}]' > ~/.config/qiita-cli/credentials.json
+          # Secretの内容（JSON）をそのままファイルに書き出します
+          echo '${{ secrets.MY_QIITA_PASS }}' > ~/.config/qiita-cli/credentials.json
 
       - name: Publish to Qiita
         run: qiita publish --all
