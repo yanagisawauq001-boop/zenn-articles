@@ -21,9 +21,4 @@ jobs:
         run: npm install -g @qiita/qiita-cli
 
       - name: Publish to Qiita
-        env:
-          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
-        run: |
-          mkdir -p /home/runner/.config/qiita-cli
-          printf '[{"accessToken":"%s","name":"github-actions"}]' "$QIITA_TOKEN" > /home/runner/.config/qiita-cli/credentials.json
-          qiita publish --all
+        run: qiita publish --all --token ${{ secrets.QIITA_TOKEN }}
