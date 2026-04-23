@@ -9,13 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
-      - name: Create Credentials
+
+      - name: Login and Publish
         env:
-          MY_KEY: ${{ secrets.QIITA_KEY }}
+          QIITA_KEY: ${{ secrets.QIITA_KEY }}
         run: |
-          mkdir -p ~/.config/qiita-cli
-          echo "[{\"accessToken\":\"$MY_KEY\",\"id\":\"YanaSho001\",\"name\":\"default\"}]" > ~/.config/qiita-cli/credentials.json
-      - name: Publish
-        run: qiita publish --all
+          # PCで成功したのと同じ「login」コマンドで設定を自動生成させます
+          qiita login --token "$QIITA_KEY"
+          qiita publish --all
