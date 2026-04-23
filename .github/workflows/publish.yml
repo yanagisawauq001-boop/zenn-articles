@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 認証ファイルの保存場所をあらかじめ作成してエラーを回避
+      # 認証情報の保存先フォルダを強制的に作成
       - name: Prepare Qiita CLI config
         run: mkdir -p /home/runner/.config/qiita-cli
 
