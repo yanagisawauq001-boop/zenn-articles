@@ -1,3 +1,1 @@
-﻿Success Message: GitHub Actions to Qiita, direct route.
-
-Final Confirmation: 2026-04-23 20:10
+﻿Hello Qiita! This post is sent directly via API.
