@@ -13,10 +13,12 @@ jobs:
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
 
-      - name: Publish to Qiita
-        env:
-          QIITA_ACCESS_TOKEN: ${{ secrets.MY_QIITA_PASS }}
+      - name: Force Create Credentials
+        # ツールが「find」などのエラーを出さないよう、
+        # 配列の中に、 yanagさんのPCで成功したのと同等のデータを直接書き込みます
         run: |
-          # 【重要】過去の負の遺産（設定ファイル）を完全に消去してから投稿します
-          rm -rf ~/.config/qiita-cli
-          qiita publish --all
+          mkdir -p ~/.config/qiita-cli
+          echo '[{"accessToken":"${{ secrets.MY_QIITA_PASS }}","id":"YanaSho001","name":"default"}]' > ~/.config/qiita-cli/credentials.json
+
+      - name: Publish to Qiita
+        run: qiita publish --all
