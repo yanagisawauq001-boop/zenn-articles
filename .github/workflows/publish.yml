@@ -17,8 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 認証ファイルの保存場所をあらかじめ作成してエラーを回避
+      - name: Prepare Qiita CLI config
+        run: mkdir -p /home/runner/.config/qiita-cli
+
       - name: Zenn Qiita Sync
         uses: C-Naoki/zenn-qiita-sync@main
         with:
           qiita-token: ${{ secrets.QIITA_TOKEN }}
-          # rootを明示せず、デフォルト設定に任せます
