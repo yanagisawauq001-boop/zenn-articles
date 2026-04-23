@@ -7,23 +7,23 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: checkout@v4
       
       - name: Direct API Publish
         env:
           QIITA_TOKEN: ${{ secrets.MY_QIITA_PASS }}
         run: |
-          # 記事の中身を読み込んで、直接 Qiita API に POST します
-          # ツールを介さないので、Invalid credentials は起き得ません
-          BODY=$(cat articles/fresh.md | jq -sRr @json)
-          TITLE="Final Success from GitHub Actions"
+          # 記事本文をJSON形式に安全に変換
+          BODY_JSON=$(cat articles/fresh.md | jq -sRr @json)
           
+          # 公開設定を「true（公開）」にして確実に送り込みます
           curl -X POST "https://qiita.com/api/v2/items" \
             -H "Authorization: Bearer $QIITA_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{
-              \"body\": $BODY,
+              \"body\": $BODY_JSON,
               \"private\": false,
-              \"tags\": [{\"name\": \"GitHub\"}],
-              \"title\": \"$TITLE\"
+              \"tags\": [{\"name\": \"GitHub\"}, {\"name\": \"Test\"}],
+              \"title\": \"GitHub Actionsから開通成功！\",
+              \"tweet\": false
             }"
