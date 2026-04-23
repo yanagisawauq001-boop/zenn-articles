@@ -9,26 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Direct API Publish
-        env:
-          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
+      - name: Install Qiita CLI
+        run: npm install -g @qiita/qiita-cli
+      - name: Create Credentials
         run: |
-          # 記事ファイルを取得（最新の1件）
-          FILE=$(ls articles/*.md | head -n 1)
-          TITLE=$(grep '^title:' $FILE | sed 's/title: //;s/"//g')
-          # 本文を抽出（--- で囲まれたヘッダー以降）
-          BODY=$(sed '1,/---/d;/---/d' $FILE)
-          
-          # Qiita APIへ直接送信（curlを使用）
-          curl -X POST "https://qiita.com/api/v2/items" \
-               -H "Authorization: Bearer $QIITA_TOKEN" \
-               -H "Content-Type: application/json" \
-               -d @- <<EOS
-          {
-            "title": "$TITLE",
-            "body": "$(echo "$BODY" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' | sed 's/^"//;s/"$//')",
-            "private": false,
-            "tags": [{"name": "GitHub"}, {"name": "Zenn"}]
-          }
-          EOS
+          mkdir -p ~/.config/qiita-cli
+          echo "[{\"accessToken\":\"${{ secrets.QIITA_TOKEN }}\",\"id\":\"YanaSho001\",\"name\":\"default\"}]" > ~/.config/qiita-cli/credentials.json
+      - name: Publish
+        run: qiita publish --all
