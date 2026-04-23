@@ -15,7 +15,8 @@ jobs:
 
       - name: Publish to Qiita
         env:
-          # GitHubに登録した「MY_QIITA_PASS」を
-          # ツールが認識できる「QIITA_ACCESS_TOKEN」として渡します
           QIITA_ACCESS_TOKEN: ${{ secrets.MY_QIITA_PASS }}
-        run: qiita publish --all
+        run: |
+          # 【重要】過去の負の遺産（設定ファイル）を完全に消去してから投稿します
+          rm -rf ~/.config/qiita-cli
+          qiita publish --all
