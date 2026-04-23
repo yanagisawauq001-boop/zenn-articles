@@ -13,30 +13,22 @@ jobs:
         env:
           QIITA_TOKEN: ${{ secrets.MY_QIITA_PASS }}
         run: |
-          # 本文を取得
-          BODY_JSON=$(cat articles/fresh.md | jq -sRr @json)
-          # 現在時刻をタイトルに混ぜて重複を避ける
-          TITLE="Yokohama Dev Log $(date +'%H:%M:%S')"
+          # 1. 安全に JSON を組み立ててファイルに保存
+          jq -n \
+            --arg body "$(cat articles/fresh.md)" \
+            --arg title "Yokohama Dev Log $(date +'%H:%M:%S')" \
+            '{body: $body, private: false, tags: [{name: "GitHub"}], title: $title}' > payload.json
           
-          echo "Sending to Qiita..."
-          
-          # 修正ポイント: tags をより厳格なJSON形式で組み立て
+          # 2. ファイルをそのまま送信（これが一番壊れにくい）
           RESPONSE=$(curl -s -X POST "https://qiita.com/api/v2/items" \
             -H "Authorization: Bearer $QIITA_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"body\": $BODY_JSON,
-              \"private\": false,
-              \"tags\": [{\"name\": \"GitHub\"}, {\"name\": \"Test\"}],
-              \"title\": \"$TITLE\"
-            }")
+            -d @payload.json)
           
           echo "Response from Qiita: $RESPONSE"
           
-          # エラーがあれば終了させる
+          # エラー判定
           if echo "$RESPONSE" | jq -e '.message' > /dev/null; then
             echo "Failed to publish."
             exit 1
           fi
-          
-          echo "Success! Article created."
