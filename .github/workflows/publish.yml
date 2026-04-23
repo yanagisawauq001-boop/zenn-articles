@@ -20,5 +20,12 @@ jobs:
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
 
+      - name: Create credentials.json
+        run: |
+          mkdir -p /home/runner/.config/qiita-cli
+          python3 -c "import json, os; print(json.dumps([{'accessToken': os.environ['QIITA_TOKEN'], 'name': 'default'}]))" > /home/runner/.config/qiita-cli/credentials.json
+        env:
+          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
+
       - name: Publish to Qiita
-        run: qiita publish --all --token ${{ secrets.QIITA_TOKEN }}
+        run: qiita publish --all
