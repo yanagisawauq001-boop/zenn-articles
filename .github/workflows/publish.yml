@@ -8,12 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Qiita CLI
-        run: npm install -g @qiita/qiita-cli
-      - name: Publish
+      
+      - name: Direct API Publish
         env:
-          QIITA_ACCESS_TOKEN: ${{ secrets.MY_QIITA_PASS }}
+          QIITA_TOKEN: ${{ secrets.MY_QIITA_PASS }}
         run: |
-          # 以前のキャッシュが残らないよう、念のため削除
-          rm -rf ~/.config/qiita-cli
-          qiita publish --all
+          # 記事の中身を読み込んで、直接 Qiita API に POST します
+          # ツールを介さないので、Invalid credentials は起き得ません
+          BODY=$(cat articles/fresh.md | jq -sRr @json)
+          TITLE="Final Success from GitHub Actions"
+          
+          curl -X POST "https://qiita.com/api/v2/items" \
+            -H "Authorization: Bearer $QIITA_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"body\": $BODY,
+              \"private\": false,
+              \"tags\": [{\"name\": \"GitHub\"}],
+              \"title\": \"$TITLE\"
+            }"
