@@ -6,10 +6,8 @@ on:
     paths:
       - 'articles/**'
 
-# 権限を明示的に定義（これが解決の鍵です）
 permissions:
   contents: write
-  packages: write
 
 jobs:
   publish_qiita:
@@ -18,10 +16,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # 自分自身へのpushを許可するためのトークンを指定
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Zenn Qiita Sync
         uses: C-Naoki/zenn-qiita-sync@main
         with:
           qiita-token: ${{ secrets.QIITA_TOKEN }}
+          # rootを明示せず、デフォルト設定に任せます
