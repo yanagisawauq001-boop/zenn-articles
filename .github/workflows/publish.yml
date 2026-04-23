@@ -13,10 +13,8 @@ jobs:
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
 
-      - name: Login and Publish
+      - name: Publish to Qiita
+        # ログインコマンドを使わず、環境変数 QIITA_TOKEN として直接渡します
         env:
-          QIITA_KEY: ${{ secrets.QIITA_KEY }}
-        run: |
-          # ツールが「入力を待っている」状態に対し、echoで値を送り込みます
-          echo "$QIITA_KEY" | qiita login
-          qiita publish --all
+          QIITA_TOKEN: ${{ secrets.QIITA_KEY }}
+        run: qiita publish --all
