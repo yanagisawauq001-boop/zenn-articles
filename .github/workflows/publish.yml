@@ -17,11 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 認証情報の保存先フォルダを強制的に作成
-      - name: Prepare Qiita CLI config
-        run: mkdir -p /home/runner/.config/qiita-cli
+      - name: Install Qiita CLI
+        run: npm install -g @qiita/qiita-cli
 
-      - name: Zenn Qiita Sync
-        uses: C-Naoki/zenn-qiita-sync@main
-        with:
-          qiita-token: ${{ secrets.QIITA_TOKEN }}
+      - name: Publish to Qiita
+        run: |
+          mkdir -p /home/runner/.config/qiita-cli
+          echo "{\"accessToken\":\"${{ secrets.QIITA_TOKEN }}\"}" > /home/runner/.config/qiita-cli/credentials.json
+          qiita publish --all
