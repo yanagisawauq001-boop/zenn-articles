@@ -12,8 +12,10 @@ jobs:
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
       - name: Create Credentials
+        env:
+          MY_KEY: ${{ secrets.QIITA_KEY }}
         run: |
           mkdir -p ~/.config/qiita-cli
-          echo "[{\"accessToken\":\"${{ secrets.QIITA_TOKEN }}\",\"id\":\"YanaSho001\",\"name\":\"default\"}]" > ~/.config/qiita-cli/credentials.json
+          echo "[{\"accessToken\":\"$MY_KEY\",\"id\":\"YanaSho001\",\"name\":\"default\"}]" > ~/.config/qiita-cli/credentials.json
       - name: Publish
         run: qiita publish --all
