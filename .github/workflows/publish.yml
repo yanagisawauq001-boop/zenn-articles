@@ -9,15 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Install Qiita CLI
         run: npm install -g @qiita/qiita-cli
-
-      - name: Deploy Local Success Credentials
+      - name: Force Deploy Credentials
         run: |
           mkdir -p ~/.config/qiita-cli
-          # Secretの内容（JSON）をそのままファイルに書き出します
-          echo '${{ secrets.MY_QIITA_PASS }}' > ~/.config/qiita-cli/credentials.json
-
+          # 成功が証明されている yanagさんの設定を、変数を通さず直接書き込みます
+          echo '[{"name":"qiita","accessToken":"4dd1b293123a547f3405a2f50ed19c39f14687cb"}]' > ~/.config/qiita-cli/credentials.json
       - name: Publish to Qiita
         run: qiita publish --all
