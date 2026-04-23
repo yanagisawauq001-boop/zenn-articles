@@ -14,7 +14,7 @@ jobs:
         run: npm install -g @qiita/qiita-cli
 
       - name: Publish to Qiita
-        # ログインコマンドを使わず、環境変数 QIITA_TOKEN として直接渡します
+        # 変数名を「QIITA_ACCESS_TOKEN」にするのが、このツールの絶対ルールでした
         env:
-          QIITA_TOKEN: ${{ secrets.QIITA_KEY }}
+          QIITA_ACCESS_TOKEN: ${{ secrets.QIITA_KEY }}
         run: qiita publish --all
