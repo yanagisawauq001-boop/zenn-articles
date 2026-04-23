@@ -13,16 +13,23 @@ jobs:
         env:
           QIITA_TOKEN: ${{ secrets.MY_QIITA_PASS }}
         run: |
-          # 記事本文をJSON形式に安全に変換（jqコマンドを使用）
           BODY_JSON=$(cat articles/fresh.md | jq -sRr @json)
           
-          # 直接APIを叩く（ここが勝負です）
-          curl -X POST "https://qiita.com/api/v2/items" \
+          # 実行結果を変数に格納し、中身を表示させます
+          RESPONSE=$(curl -s -X POST "https://qiita.com/api/v2/items" \
             -H "Authorization: Bearer $QIITA_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{
               \"body\": $BODY_JSON,
               \"private\": false,
-              \"tags\": [{\"name\": \"GitHub\"}],
-              \"title\": \"GitHub Actionsから開通成功！\"
-            }"
+              \"tags\": [{\"name\": \"test\"}],
+              \"title\": \"Final Victory Check from Yokohama\"
+            }")
+          
+          echo "Qiita API Response: $RESPONSE"
+          
+          # エラーメッセージが含まれているかチェック
+          if [[ $RESPONSE == *"message"* ]]; then
+            echo "API returned an error."
+            exit 1
+          fi
